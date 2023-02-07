@@ -7,26 +7,27 @@ const validateTalk = require('../middlewares/validateTalk');
 const validateTalkerLength = require('../middlewares/validateTalkerLength');
 const validateToken = require('../middlewares/validateToken');
 const validateWatchedAt = require('../middlewares/validateWatchedAt');
-const talker = require('../talker.json');
+const { readTalkerFIle, getLastId, writeTalkerFile, findTalker } = require('../utils/utils');
 
 const router = express.Router();
 
-router.get('/', validateTalkerLength, (req, res) => res.status(200).json(talker));
+router.get('/', validateTalkerLength, async (req, res) =>
+  res.status(200).json(await readTalkerFIle()));
 
-router.get('/:id', validateFindTalker, (req, res) => {
+router.get('/:id', validateFindTalker, async (req, res) => {
   const { id } = req.params;
+  const foundTalker = findTalker(id);
 
-  const foundTalker = talker.find((person) => person.id === Number(id));
   return res.status(200).json(foundTalker);
 });
 
 router.post('/', validateToken, validateName, validateAge,
-  validateTalk, validateWatchedAt, validateRate, (req, res) => {
-    const id = talker[talker.length - 1].id + 1;
+  validateTalk, validateWatchedAt, validateRate, async (req, res) => {
+    const id = await getLastId();
     const newTalker = { id, ...req.body };
-    talker.push(newTalker);
+    await writeTalkerFile(newTalker);
 
-    return res.status(201).json({ newTalker });
+    return res.status(201).json(newTalker);
   });
 
 module.exports = router;
