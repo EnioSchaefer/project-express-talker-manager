@@ -1,6 +1,6 @@
 const fs = require('fs/promises');
 
-const readTalkerFIle = async () => {
+const readTalkerFile = async () => {
   try {
     const talker = await fs.readFile('./src/talker.json');
 
@@ -11,13 +11,13 @@ const readTalkerFIle = async () => {
 };
 
 const getLastId = async () => {
-  const talker = await readTalkerFIle();
+  const talker = await readTalkerFile();
   return talker.length + 1;
 };
 
 const writeTalkerFile = async (post) => {
   try {
-    const talker = await readTalkerFIle();
+    const talker = await readTalkerFile();
     talker.push(post);
 
     return await fs.writeFile('./src/talker.json', JSON.stringify(talker));
@@ -28,7 +28,7 @@ const writeTalkerFile = async (post) => {
 
 const findTalker = async (rawId) => {
   try {
-    const talker = await readTalkerFIle();
+    const talker = await readTalkerFile();
     const id = Number(rawId);
 
     const selectedTalker = talker.find((curr) => curr.id === id);
@@ -38,9 +38,26 @@ const findTalker = async (rawId) => {
   }
 };
 
+const editTalker = async (put, rawId) => {
+  try {
+    const talker = await readTalkerFile();
+    const id = Number(rawId);
+    const index = talker.findIndex((person) => person.id === id);
+    const editedTalker = { id, ...put };
+    talker[index] = editedTalker;
+
+    await fs.writeFile('./src/talker.json', JSON.stringify(talker));
+
+    return editedTalker;
+  } catch (err) {
+    return null;
+  }
+};
+
 module.exports = {
-  readTalkerFIle,
+  readTalkerFile,
   writeTalkerFile,
   getLastId,
   findTalker,
+  editTalker,
 };
