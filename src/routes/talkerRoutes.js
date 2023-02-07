@@ -8,7 +8,7 @@ const validateTalkerLength = require('../middlewares/validateTalkerLength');
 const validateToken = require('../middlewares/validateToken');
 const validateWatchedAt = require('../middlewares/validateWatchedAt');
 const { readTalkerFile, getLastId, writeTalkerFile,
-  findTalker, editTalker } = require('../utils/utils');
+  findTalker, editTalker, deleteTalker } = require('../utils/utils');
 
 const router = express.Router();
 
@@ -40,5 +40,13 @@ router.put('/:id', validateToken, validateName, validateAge,
 
     res.status(200).json(editedTalker);
   });
+
+router.delete('/:id', validateToken, async (req, res) => {
+  const { id } = req.params;
+
+  await deleteTalker(id);
+
+  return res.status(204).end();
+});
 
 module.exports = router;
