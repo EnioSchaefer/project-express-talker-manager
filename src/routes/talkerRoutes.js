@@ -16,7 +16,7 @@ router.get('/', validateTalkerLength, async (req, res) =>
 
 router.get('/:id', validateFindTalker, async (req, res) => {
   const { id } = req.params;
-  const foundTalker = findTalker(id);
+  const foundTalker = await findTalker(id);
 
   return res.status(200).json(foundTalker);
 });
