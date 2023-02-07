@@ -8,9 +8,16 @@ const validateTalkerLength = require('../middlewares/validateTalkerLength');
 const validateToken = require('../middlewares/validateToken');
 const validateWatchedAt = require('../middlewares/validateWatchedAt');
 const { readTalkerFile, getLastId, writeTalkerFile,
-  findTalker, editTalker, deleteTalker } = require('../utils/utils');
+  findTalker, editTalker, deleteTalker, searchTalker } = require('../utils/utils');
 
 const router = express.Router();
+
+router.get('/search', validateToken, async (req, res) => {
+  const { q } = req.query;
+  const searchedTalker = await searchTalker(q);
+
+  return res.status(200).json(searchedTalker);
+});
 
 router.get('/', validateTalkerLength, async (req, res) =>
   res.status(200).json(await readTalkerFile()));

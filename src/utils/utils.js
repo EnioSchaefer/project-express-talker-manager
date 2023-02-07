@@ -59,9 +59,20 @@ const deleteTalker = async (rawId) => {
     const talker = await readTalkerFile();
     const id = Number(rawId);
     const updatedTalker = talker.filter((person) => person.id !== id);
-    console.log(updatedTalker);
 
     return await fs.writeFile('./src/talker.json', JSON.stringify(updatedTalker));
+  } catch (err) {
+    return null;
+  }
+};
+
+const searchTalker = async (searchTerm) => {
+  try {
+    const talker = await readTalkerFile();
+    const searchedTalker = talker.map((person) => person.name.includes(searchTerm) && person)
+      .filter((person) => !!person);
+
+    return searchedTalker;
   } catch (err) {
     return null;
   }
@@ -74,4 +85,5 @@ module.exports = {
   findTalker,
   editTalker,
   deleteTalker,
+  searchTalker,
 };
